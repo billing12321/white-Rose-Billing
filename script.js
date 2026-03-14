@@ -46,6 +46,58 @@ function addItem() {
     showNotification(`✅ ${itemName} added successfully!`, "success");
 }
 
+// Add Custom Item - WITHOUT (Custom) tag
+function addCustomItem() {
+    let customNameInput = document.getElementById("customItemName");
+    let customPriceInput = document.getElementById("customItemPrice");
+    let customAddBtn = document.getElementById("customAddBtn");
+    
+    let itemName = customNameInput.value.trim();
+    let price = parseFloat(customPriceInput.value);
+    
+    // Validation
+    if (!itemName) {
+        showNotification("❌ Please enter item name!", "error");
+        customNameInput.style.borderColor = "#dc3545";
+        return;
+    }
+    
+    if (isNaN(price) || price <= 0) {
+        showNotification("❌ Please enter valid price!", "error");
+        customPriceInput.style.borderColor = "#dc3545";
+        return;
+    }
+    
+    // Reset border colors
+    customNameInput.style.borderColor = "#e0e8f0";
+    customPriceInput.style.borderColor = "#e0e8f0";
+    
+    let qty = 1; // Default quantity for custom items
+    let total = price * qty;
+    
+    // Add loading animation to button
+    customAddBtn.classList.add("loading");
+    
+    setTimeout(() => {
+        customAddBtn.classList.remove("loading");
+    }, 500);
+    
+    // Push WITHOUT the "(Custom)" tag
+    invoiceItems.push({
+        name: itemName,  // Just the name, no (Custom) tag
+        price: price,
+        quantity: qty,
+        total: total
+    });
+    
+    renderInvoice();
+    showNotification(`✅ "${itemName}" added successfully!`, "success");
+    
+    // Clear inputs
+    customNameInput.value = "";
+    customPriceInput.value = "";
+}
+
 function removeItem(index) {
     if (confirm("Are you sure you want to remove this item?")) {
         let removedItem = invoiceItems[index].name;
@@ -187,26 +239,15 @@ function printInvoice() {
         return;
     }
 
-    // Validate customer details
+    // Get customer details - only customer name is required
     let customer = document.getElementById("customer").value.trim();
     let phone = document.getElementById("phone").value.trim();
     let bookingno = document.getElementById("bookingno").value.trim();
 
+    // Only validate customer name (required)
     if (!customer) {
         showNotification("⚠️ Please enter customer name!", "error");
         document.getElementById("customer").style.borderColor = "#dc3545";
-        return;
-    }
-
-    if (!phone || phone.length !== 10) {
-        showNotification("⚠️ Please enter valid 10-digit phone number!", "error");
-        document.getElementById("phone").style.borderColor = "#dc3545";
-        return;
-    }
-
-    if (!bookingno) {
-        showNotification("⚠️ Please enter booking number!", "error");
-        document.getElementById("bookingno").style.borderColor = "#dc3545";
         return;
     }
 
@@ -214,6 +255,10 @@ function printInvoice() {
     document.getElementById("customer").style.borderColor = "#e0e8f0";
     document.getElementById("phone").style.borderColor = "#e0e8f0";
     document.getElementById("bookingno").style.borderColor = "#e0e8f0";
+
+    // Use hyphen for empty fields
+    let displayPhone = phone ? phone : "-";
+    let displayBookingNo = bookingno ? "#" + bookingno : "-";
 
     let dateStr = new Date().toLocaleDateString('en-IN', {
         day: '2-digit',
@@ -334,7 +379,7 @@ function printInvoice() {
             color: #1B3B5C;
         }
         
-        /* Customer Details Grid - 3 COLUMNS (Name, Phone, Booking No) */
+        /* Customer Details Grid - Always show all 3 columns with hyphen if empty */
         .customer-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -398,6 +443,14 @@ function printInvoice() {
             border-radius: 20px;
             display: inline-block;
             border: 1px solid #FDBB30;
+        }
+        
+        /* Style for hyphen (empty fields) */
+        .hyphen-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: #999;
+            font-style: italic;
         }
         
         /* Section Title */
@@ -519,20 +572,6 @@ function printInvoice() {
             color: #6B7A8F;
         }
         
-        .signature-line {
-            width: 100px;
-            height: 2px;
-            background: #DDE3EC;
-            display: inline-block;
-            margin-left: 8px;
-        }
-        
-        .signature-text {
-            font-size: 11px;
-            font-weight: 600;
-            color: #0B2A4A;
-        }
-        
         /* Decorative Elements */
         .corner-decoration {
             position: absolute;
@@ -623,10 +662,10 @@ function printInvoice() {
     html += "</div>";
     html += "</div>";
     
-    // Customer Details Grid - 3 COLUMNS (Name, Phone, Booking No)
+    // Customer Details Grid - Show all 3 columns with hyphen for empty fields
     html += "<div class='customer-grid'>";
     
-    // Customer Name
+    // Customer Name (always shown)
     html += "<div class='customer-item'>";
     html += "<div class='customer-icon'>👤</div>";
     html += "<div class='customer-details'>";
@@ -635,21 +674,29 @@ function printInvoice() {
     html += "</div>";
     html += "</div>";
     
-    // Phone Number
+    // Phone Number (show hyphen if empty)
     html += "<div class='customer-item'>";
     html += "<div class='customer-icon'>📞</div>";
     html += "<div class='customer-details'>";
     html += "<div class='customer-label'>Phone Number</div>";
-    html += "<div class='phone-value'>" + phone + "</div>";
+    if (phone) {
+        html += "<div class='phone-value'>" + displayPhone + "</div>";
+    } else {
+        html += "<div class='hyphen-value'>-</div>";
+    }
     html += "</div>";
     html += "</div>";
     
-    // Booking Number (changed from Customer ID)
+    // Booking Number (show hyphen if empty)
     html += "<div class='customer-item'>";
     html += "<div class='customer-icon'>🔖</div>";
     html += "<div class='customer-details'>";
     html += "<div class='customer-label'>Booking No</div>";
-    html += "<div class='booking-value'>#" + bookingno + "</div>";
+    if (bookingno) {
+        html += "<div class='booking-value'>" + displayBookingNo + "</div>";
+    } else {
+        html += "<div class='hyphen-value'>-</div>";
+    }
     html += "</div>";
     html += "</div>";
     
@@ -770,9 +817,4 @@ document.getElementById("quantity").addEventListener("input", function(e) {
 // Initialize
 document.addEventListener("DOMContentLoaded", function() {
     showNotification("🎉 Welcome to WHITE ROSE EVENTS!", "info");
-    
-    // Remove any placeholder attributes from first 3 inputs
-    document.getElementById("customer").removeAttribute("placeholder");
-    document.getElementById("phone").removeAttribute("placeholder");
-    document.getElementById("bookingno").removeAttribute("placeholder");
 });
