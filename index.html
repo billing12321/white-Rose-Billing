@@ -183,6 +183,120 @@ button:active {
     }
 }
 
+/* Custom Item Box - Clean version without symbol */
+.custom-item-box {
+    background: linear-gradient(135deg, #f0f7ff, #e6f0fa);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid #2a5298;
+    box-shadow: 0 10px 25px rgba(30, 60, 114, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.custom-item-box h3 {
+    color: #1e3c72;
+    font-size: 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px dashed #2a5298;
+    padding-bottom: 10px;
+}
+
+.custom-item-box h3 i {
+    font-size: 22px;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    width: 35px;
+    height: 35px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+/* Input fields in one row */
+.custom-inputs-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.custom-item-field {
+    flex: 1;
+}
+
+.custom-item-field label {
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 13px;
+    color: #2a5298;
+    font-weight: 600;
+}
+
+.custom-item-field input {
+    background: white;
+    border: 2px solid #e0e8f0;
+    font-size: 15px;
+    padding: 12px 15px;
+    height: 50px;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.custom-item-field input:focus {
+    border-color: #2a5298;
+    box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+    outline: none;
+}
+
+/* Custom Add Button - Same style as the blue button above */
+.custom-add-btn {
+    background: linear-gradient(45deg, #1e3c72, #2a5298) !important;
+    width: 100%;
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px !important;
+    border-radius: 8px !important;
+    margin-top: 5px !important;
+    height: auto !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3) !important;
+    text-transform: uppercase;
+}
+
+.custom-add-btn:hover {
+    background: linear-gradient(45deg, #2a5298, #1e3c72) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(30, 60, 114, 0.5) !important;
+}
+
+.custom-add-btn:active {
+    transform: translateY(0) !important;
+}
+
+.custom-add-btn span {
+    font-size: 16px;
+}
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+    .custom-inputs-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
 table {
     width: 100%;
     border-collapse: separate;
@@ -433,26 +547,36 @@ label i {
     margin-right: 5px;
 }
 
-/* Remove placeholder styling */
+/* Placeholder styling */
 input::placeholder {
-    color: transparent;
+    color: #999;
+    font-size: 12px;
+    opacity: 0.8;
 }
 
 /* For older browsers */
 input::-webkit-input-placeholder {
-    color: transparent;
+    color: #999;
+    font-size: 12px;
+    opacity: 0.8;
 }
 
 input::-moz-placeholder {
-    color: transparent;
+    color: #999;
+    font-size: 12px;
+    opacity: 0.8;
 }
 
 input:-ms-input-placeholder {
-    color: transparent;
+    color: #999;
+    font-size: 12px;
+    opacity: 0.8;
 }
 
 input:-moz-placeholder {
-    color: transparent;
+    color: #999;
+    font-size: 12px;
+    opacity: 0.8;
 }
 </style>
 </head>
@@ -460,7 +584,7 @@ input:-moz-placeholder {
 
 <div class="container">
 
-<h1> WHITE ROSE EVENTS</h1>
+<h1>🌹 WHITE ROSE EVENTS</h1>
 
 <div class="customer-info">
     <div>
@@ -471,12 +595,12 @@ input:-moz-placeholder {
     <div>
         <label data-tooltip="Enter 10-digit mobile number"><i>📞</i> Phone Number</label>
         <input type="tel" id="phone" pattern="[0-9]{10}" maxlength="10"
-               oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)" required>
+               oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)">
     </div>
 
     <div>
         <label data-tooltip="Enter booking number"><i>🔖</i> Booking No</label>
-        <input type="text" id="bookingno" required>
+        <input type="text" id="bookingno">
     </div>
 </div>
 
@@ -500,6 +624,28 @@ input:-moz-placeholder {
 </div>
 
 <button onclick="addItem()" id="addBtn">➕ Add Item to Bill</button>
+
+<!-- CUSTOM ITEM BOX - Clean version without symbol -->
+<div class="custom-item-box">
+    <h3><i>📦</i> Add Custom Item</h3>
+    
+    <!-- Input fields in one row at the top -->
+    <div class="custom-inputs-row">
+        <div class="custom-item-field">
+            <label><i>📝</i> Item Name</label>
+            <input type="text" id="customItemName" placeholder="e.g., Extra Rice, Cold Drink, etc.">
+        </div>
+        <div class="custom-item-field">
+            <label><i>💰</i> Amount (₹)</label>
+            <input type="number" id="customItemPrice" min="1" step="0.5" placeholder="Enter price">
+        </div>
+    </div>
+    
+    <!-- Button styled like the blue button above -->
+    <button onclick="addCustomItem()" id="customAddBtn" class="custom-add-btn">
+        <span>➕</span> Add Custom Item
+    </button>
+</div>
 
 <table id="invoiceTable">
     <thead>
