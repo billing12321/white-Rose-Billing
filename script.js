@@ -46,7 +46,7 @@ function addItem() {
     showNotification(`✅ ${itemName} added successfully!`, "success");
 }
 
-// Add Custom Item - WITHOUT (Custom) tag
+// Add Custom Item
 function addCustomItem() {
     let customNameInput = document.getElementById("customItemName");
     let customPriceInput = document.getElementById("customItemPrice");
@@ -72,7 +72,7 @@ function addCustomItem() {
     customNameInput.style.borderColor = "#e0e8f0";
     customPriceInput.style.borderColor = "#e0e8f0";
     
-    let qty = 1; // Default quantity for custom items
+    let qty = 1;
     let total = price * qty;
     
     // Add loading animation to button
@@ -82,9 +82,8 @@ function addCustomItem() {
         customAddBtn.classList.remove("loading");
     }, 500);
     
-    // Push WITHOUT the "(Custom)" tag
     invoiceItems.push({
-        name: itemName,  // Just the name, no (Custom) tag
+        name: itemName,
         price: price,
         quantity: qty,
         total: total
@@ -129,14 +128,13 @@ function renderInvoice() {
             
             row.innerHTML =
                 "<td><strong>" + it.name + "</strong></td>" +
-                "<td>₹" + it.price.toFixed(2) + "</td>" +
-                "<td>" + it.quantity + " KG</td>" +
+                "<td><strong>₹" + it.price.toFixed(2) + "</strong></td>" +
+                "<td><strong>" + it.quantity + " KG</strong></td>" +
                 "<td><strong>₹" + it.total.toFixed(2) + "</strong></td>" +
                 "<td><button onclick='removeItem(" + index + ")' class='remove-btn' style='background: #dc3545; padding: 5px 10px; font-size: 11px;'>✖</button></td>";
 
             tbody.appendChild(row);
             
-            // Trigger animation
             setTimeout(() => {
                 row.style.opacity = "1";
             }, 10);
@@ -164,13 +162,11 @@ function animateValue(element, start, end, duration) {
 }
 
 function showNotification(message, type) {
-    // Remove existing notification
     let existingNotif = document.querySelector(".notification");
     if (existingNotif) {
         existingNotif.remove();
     }
 
-    // Create notification element
     let notification = document.createElement("div");
     notification.className = "notification";
     notification.style.cssText = `
@@ -187,7 +183,6 @@ function showNotification(message, type) {
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     `;
 
-    // Set color based on type
     switch(type) {
         case "success":
             notification.style.background = "linear-gradient(135deg, #667eea, #764ba2)";
@@ -202,7 +197,6 @@ function showNotification(message, type) {
 
     notification.textContent = message;
 
-    // Add animation styles
     let style = document.createElement("style");
     style.textContent = `
         @keyframes slideInRight {
@@ -224,7 +218,6 @@ function showNotification(message, type) {
 
     document.body.appendChild(notification);
 
-    // Remove notification after 3 seconds
     setTimeout(() => {
         notification.style.animation = "slideInRight 0.3s ease reverse forwards";
         setTimeout(() => {
@@ -239,26 +232,13 @@ function printInvoice() {
         return;
     }
 
-    // Get customer details - only customer name is required
-    let customer = document.getElementById("customer").value.trim();
-    let phone = document.getElementById("phone").value.trim();
-    let bookingno = document.getElementById("bookingno").value.trim();
+    // Get customer details
+    let customer = document.getElementById("customer").value.trim() || "Customer";
+    let phone = document.getElementById("phone").value.trim() || "-";
+    let bookingno = document.getElementById("bookingno").value.trim() || "-";
 
-    // Only validate customer name (required)
-    if (!customer) {
-        showNotification("⚠️ Please enter customer name!", "error");
-        document.getElementById("customer").style.borderColor = "#dc3545";
-        return;
-    }
-
-    // Reset border colors
-    document.getElementById("customer").style.borderColor = "#e0e8f0";
-    document.getElementById("phone").style.borderColor = "#e0e8f0";
-    document.getElementById("bookingno").style.borderColor = "#e0e8f0";
-
-    // Use hyphen for empty fields
-    let displayPhone = phone ? phone : "-";
-    let displayBookingNo = bookingno ? "#" + bookingno : "-";
+    let displayPhone = phone;
+    let displayBookingNo = bookingno !== "-" ? "#" + bookingno : "-";
 
     let dateStr = new Date().toLocaleDateString('en-IN', {
         day: '2-digit',
@@ -270,19 +250,15 @@ function printInvoice() {
 
     let html = "<html><head><meta charset='utf-8'><title>WHITE ROSE EVENTS - Invoice</title>";
     
-    // FORCE A5 FOR ALL DEVICES - CRITICAL META TAGS
-    html += `
-    <meta name="viewport" content="width=148mm, height=210mm, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="format-detection" content="telephone=no">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    `;
-    
     html += `
     <style>
-        /* Professional Font Stack - BIGGER AND BOLDER */
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
-        /* FORCE A5 FOR ALL DEVICES */
+        @page {
+            size: A5;
+            margin: 0;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -291,53 +267,44 @@ function printInvoice() {
         
         html, body {
             width: 148mm;
-            height: auto;
             min-height: 210mm;
-            margin: 0 auto !important;
-            padding: 0 !important;
+            margin: 0 auto;
             background: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
         
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            padding: 0;
+            background: white;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
         }
         
-        /* Main Invoice Container - Fixed A5 dimensions */
         .invoice {
             width: 148mm;
-            min-width: 148mm;
             max-width: 148mm;
             background: #ffffff;
             margin: 0 auto;
-            box-shadow: none;
-            position: relative;
-            overflow: hidden;
-            page-break-after: avoid;
-            page-break-inside: avoid;
             font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            min-height: 210mm;
         }
         
-        /* PURE WHITE BLANK SPACE - 150px */
+        .invoice-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 22px 20px 22px;
+        }
+        
+        /* WHITE BLANK SPACE - 180px */
         .white-blank-space {
             background: #ffffff;
-            height: 150px;
+            height: 180px;
             width: 100%;
-            position: relative;
         }
         
-        /* Content Area - Starts directly after white space */
-        .invoice-content {
-            padding: 0 22px 18px 22px;
-            position: relative;
-            z-index: 1;
-            background: white;
-        }
-        
-        /* Date Panel - First thing after white space */
         .date-panel {
             display: flex;
             justify-content: flex-end;
@@ -379,7 +346,6 @@ function printInvoice() {
             color: #1B3B5C;
         }
         
-        /* Customer Details Grid - Always show all 3 columns with hyphen if empty */
         .customer-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -434,18 +400,51 @@ function printInvoice() {
             letter-spacing: 0.5px;
         }
         
-        .booking-value {
-            font-size: 15px;
-            font-weight: 700;
-            color: #0B2A4A;
-            background: white;
-            padding: 2px 8px;
-            border-radius: 20px;
-            display: inline-block;
-            border: 1px solid #FDBB30;
+        .booking-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0B2A4A, #1B3B5C);
+            border-radius: 12px;
+            padding: 8px 15px;
+            border: 2px solid #FDBB30;
+            box-shadow: 0 8px 20px rgba(253, 187, 48, 0.3);
         }
         
-        /* Style for hyphen (empty fields) */
+        .booking-icon {
+            width: 40px;
+            height: 40px;
+            background: #FDBB30;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0B2A4A;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .booking-details {
+            flex: 1;
+        }
+        
+        .booking-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #FDBB30;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+        
+        .booking-value-highlight {
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+        
         .hyphen-value {
             font-size: 15px;
             font-weight: 700;
@@ -453,7 +452,6 @@ function printInvoice() {
             font-style: italic;
         }
         
-        /* Section Title */
         .section-title {
             display: flex;
             align-items: center;
@@ -475,14 +473,12 @@ function printInvoice() {
             text-transform: uppercase;
         }
         
-        /* Table */
         .table-wrapper {
             background: #F8FAFE;
             border-radius: 12px;
             padding: 4px;
             border: 1px solid #E9EEF5;
             margin-bottom: 20px;
-            overflow: hidden;
         }
         
         .items-table {
@@ -490,7 +486,6 @@ function printInvoice() {
             border-collapse: collapse;
             background: white;
             border-radius: 8px;
-            overflow: hidden;
         }
         
         .items-table th {
@@ -527,10 +522,19 @@ function printInvoice() {
             font-size: 14px;
         }
         
-        /* ===== SIMPLE GRAND TOTAL SECTION ===== */
+        .items-table td:nth-child(2) {
+            font-weight: 700;
+            color: #0B2A4A;
+        }
+        
+        .grand-total-container {
+            margin-top: auto;
+            width: 100%;
+        }
+        
         .grand-total-section {
-            margin-top: 25px;
             padding: 0;
+            width: 100%;
         }
         
         .grand-total-simple {
@@ -538,6 +542,7 @@ function printInvoice() {
             border-radius: 12px;
             padding: 15px 20px;
             border: 1px solid #FDBB30;
+            box-shadow: 0 8px 20px rgba(253, 187, 48, 0.3);
         }
         
         .grand-total-row-simple {
@@ -558,23 +563,23 @@ function printInvoice() {
             font-size: 28px;
             font-weight: 700;
             color: #FDBB30;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
         
-        /* Footer */
         .invoice-footer {
-            margin-top: 20px;
-            padding: 12px 0 0;
+            margin-top: 10px;
+            padding: 12px 0 10px;
             border-top: 2px dashed #DDE3EC;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 11px;
             color: #6B7A8F;
+            width: 100%;
         }
         
-        /* Decorative Elements */
         .corner-decoration {
-            position: absolute;
+            position: fixed;
             bottom: 10px;
             right: 10px;
             opacity: 0.03;
@@ -586,39 +591,15 @@ function printInvoice() {
             pointer-events: none;
         }
         
-        /* FORCE A5 PRINT - CRITICAL */
         @media print {
             @page {
                 size: A5;
                 margin: 0;
             }
             
-            html, body {
-                width: 148mm;
-                height: 210mm;
-                background: white;
-                padding: 0;
-                margin: 0;
-            }
-            
-            body {
-                padding: 0;
-                background: white;
-                display: block;
-            }
-            
-            .invoice {
-                width: 148mm;
-                min-width: 148mm;
-                max-width: 148mm;
-                margin: 0 auto;
-                box-shadow: none;
-                page-break-inside: avoid;
-            }
-            
             .white-blank-space {
                 background: #ffffff !important;
-                height: 150px !important;
+                height: 180px !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
@@ -628,15 +609,17 @@ function printInvoice() {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-        }
-        
-        /* FORCE A5 ON MOBILE SCREENS */
-        @media screen and (max-width: 600px) {
-            html, body {
-                width: 148mm;
-                margin: 0 auto;
-                transform: scale(0.9);
-                transform-origin: top center;
+            
+            .booking-item {
+                background: #0B2A4A !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .booking-icon {
+                background: #FDBB30 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
         }
     </style>
@@ -644,14 +627,12 @@ function printInvoice() {
 
     html += "</head><body>";
     html += "<div class='invoice'>";
-    
-    // PURE WHITE BLANK SPACE - 150px - NO TEXT, NO LOGO, NOTHING
-    html += "<div class='white-blank-space'></div>";
-    
-    // Content
     html += "<div class='invoice-content'>";
     
-    // DATE PANEL - First thing after white space
+    // White space - 180px
+    html += "<div class='white-blank-space'></div>";
+    
+    // Date
     html += "<div class='date-panel'>";
     html += "<div class='date-card'>";
     html += "<div class='date-icon'>📅</div>";
@@ -662,10 +643,10 @@ function printInvoice() {
     html += "</div>";
     html += "</div>";
     
-    // Customer Details Grid - Show all 3 columns with hyphen for empty fields
+    // Customer Grid
     html += "<div class='customer-grid'>";
     
-    // Customer Name (always shown)
+    // Customer Name
     html += "<div class='customer-item'>";
     html += "<div class='customer-icon'>👤</div>";
     html += "<div class='customer-details'>";
@@ -674,31 +655,37 @@ function printInvoice() {
     html += "</div>";
     html += "</div>";
     
-    // Phone Number (show hyphen if empty)
+    // Phone
     html += "<div class='customer-item'>";
     html += "<div class='customer-icon'>📞</div>";
     html += "<div class='customer-details'>";
     html += "<div class='customer-label'>Phone Number</div>";
-    if (phone) {
-        html += "<div class='phone-value'>" + displayPhone + "</div>";
+    if (phone !== "-") {
+        html += "<div class='phone-value'>" + phone + "</div>";
     } else {
         html += "<div class='hyphen-value'>-</div>";
     }
     html += "</div>";
     html += "</div>";
     
-    // Booking Number (show hyphen if empty)
-    html += "<div class='customer-item'>";
-    html += "<div class='customer-icon'>🔖</div>";
-    html += "<div class='customer-details'>";
-    html += "<div class='customer-label'>Booking No</div>";
-    if (bookingno) {
-        html += "<div class='booking-value'>" + displayBookingNo + "</div>";
+    // Booking
+    if (bookingno !== "-") {
+        html += "<div class='booking-item'>";
+        html += "<div class='booking-icon'>🔖</div>";
+        html += "<div class='booking-details'>";
+        html += "<div class='booking-label'>Booking No</div>";
+        html += "<div class='booking-value-highlight'>" + displayBookingNo + "</div>";
+        html += "</div>";
+        html += "</div>";
     } else {
+        html += "<div class='customer-item'>";
+        html += "<div class='customer-icon'>🔖</div>";
+        html += "<div class='customer-details'>";
+        html += "<div class='customer-label'>Booking No</div>";
         html += "<div class='hyphen-value'>-</div>";
+        html += "</div>";
+        html += "</div>";
     }
-    html += "</div>";
-    html += "</div>";
     
     html += "</div>";
     
@@ -711,20 +698,14 @@ function printInvoice() {
     // Table
     html += "<div class='table-wrapper'>";
     html += "<table class='items-table'>";
-    html += "<thead>";
-    html += "<tr>";
-    html += "<th>Item Description</th>";
-    html += "<th>Qty (KG)</th>";
-    html += "<th>Total</th>";
-    html += "</tr>";
-    html += "</thead>";
+    html += "<thead><tr><th>Item Description</th><th>Qty (KG)</th><th>Total</th></tr></thead>";
     html += "<tbody>";
 
     invoiceItems.forEach(it => {
         html += `<tr>
-            <td class="item-name">${it.name}</td>
-            <td>${it.quantity} KG</td>
-            <td class="item-total">₹${it.total.toFixed(2)}</td>
+            <td class="item-name"><strong>${it.name}</strong></td>
+            <td><strong>${it.quantity} KG</strong></td>
+            <td class="item-total"><strong>₹${it.total.toFixed(2)}</strong></td>
         </tr>`;
     });
 
@@ -732,48 +713,31 @@ function printInvoice() {
     html += "</table>";
     html += "</div>";
     
-    // ===== SIMPLE GRAND TOTAL SECTION - NO MONEY BAG ICON =====
+    // Grand Total and Footer
+    html += "<div class='grand-total-container'>";
     html += "<div class='grand-total-section'>";
     html += "<div class='grand-total-simple'>";
     html += "<div class='grand-total-row-simple'>";
-    
-    // Simple Grand Total label (no icon)
     html += "<span class='grand-total-label-simple'>Grand Total</span>";
-    
-    // Simple amount with just ₹ and number
     html += "<span class='grand-total-amount-simple'>₹ " + grand + "</span>";
+    html += "</div>";
+    html += "</div>";
+    html += "</div>";
     
-    html += "</div>"; // Close grand-total-row-simple
-    html += "</div>"; // Close grand-total-simple
-    html += "</div>"; // Close grand-total-section
-    
-    // Footer
     html += "<div class='invoice-footer'>";
     html += "<div>Thank you for choosing White Rose Events</div>";
     html += "</div>";
-    
-    // Decorative Element
-    html += "<div class='corner-decoration'>🌹</div>";
+    html += "</div>";
     
     html += "</div>"; // Close invoice-content
+    html += "<div class='corner-decoration'>🌹</div>";
     html += "</div>"; // Close invoice
     
-    // FORCE A5 PRINT WITH JAVASCRIPT
     html += `<script>
-        // Force A5 paper settings
         window.onload = function() {
-            // Set viewport to A5 dimensions
-            var meta = document.createElement('meta');
-            meta.name = "viewport";
-            meta.content = "width=148mm, height=210mm, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
-            document.getElementsByTagName('head')[0].appendChild(meta);
-            
-            // Force print dialog with A5
             setTimeout(function() {
                 window.print();
             }, 500);
-            
-            // Close after print
             window.onafterprint = function() {
                 setTimeout(function() {
                     window.close();
@@ -784,7 +748,6 @@ function printInvoice() {
     
     html += "</body></html>";
 
-    // Open print window with A5 dimensions
     const w = window.open('', '_blank', 'width=600,height=800');
     w.document.write(html);
     w.document.close();
@@ -796,7 +759,7 @@ function printInvoice() {
     showNotification("📄 A5 Invoice generated successfully!", "success");
 }
 
-// Add keyboard shortcut for adding items (Enter key)
+// Keyboard shortcut
 document.addEventListener("keypress", function(e) {
     if (e.key === "Enter" && e.target.tagName !== "BUTTON") {
         let addBtn = document.getElementById("addBtn");
@@ -807,7 +770,7 @@ document.addEventListener("keypress", function(e) {
     }
 });
 
-// Input validation for quantity
+// Quantity validation
 document.getElementById("quantity").addEventListener("input", function(e) {
     let value = parseFloat(this.value);
     if (value < 0.5) this.value = 0.5;
