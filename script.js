@@ -305,45 +305,25 @@ function printInvoice() {
             width: 100%;
         }
         
-        .date-panel {
+        /* COMPACT BOLD DATE */
+        .compact-date {
             display: flex;
             justify-content: flex-end;
-            margin-bottom: 20px;
+            margin-bottom: 8px;
+            line-height: 1;
         }
         
-        .date-card {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #F8FAFE;
-            padding: 8px 16px;
-            border-radius: 12px;
-            border: 1px solid #E9EEF5;
-        }
-        
-        .date-icon {
-            width: 32px;
-            height: 32px;
-            background: #FDBB3020;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #FDBB30;
-            font-size: 14px;
-        }
-        
-        .date-label {
-            font-size: 9px;
-            font-weight: 600;
-            color: #8A99AA;
-            text-transform: uppercase;
-        }
-        
-        .date-value {
-            font-size: 14px;
+        .compact-date span {
+            background: #f0f4fa;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: 700;
-            color: #1B3B5C;
+            color: #0B2A4A;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.3px;
         }
         
         .customer-grid {
@@ -400,27 +380,28 @@ function printInvoice() {
             letter-spacing: 0.5px;
         }
         
+        /* COMPACT BOOKING ITEM */
         .booking-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             background: linear-gradient(135deg, #0B2A4A, #1B3B5C);
-            border-radius: 12px;
-            padding: 8px 15px;
-            border: 2px solid #FDBB30;
-            box-shadow: 0 8px 20px rgba(253, 187, 48, 0.3);
+            border-radius: 8px;
+            padding: 5px 12px;
+            border: 1.5px solid #FDBB30;
+            box-shadow: 0 4px 10px rgba(253, 187, 48, 0.2);
         }
         
         .booking-icon {
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             background: #FDBB30;
-            border-radius: 10px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #0B2A4A;
-            font-size: 20px;
+            font-size: 16px;
             font-weight: bold;
         }
         
@@ -429,16 +410,16 @@ function printInvoice() {
         }
         
         .booking-label {
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 600;
             color: #FDBB30;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 2px;
+            margin-bottom: 0;
         }
         
         .booking-value-highlight {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 800;
             color: white;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
@@ -450,27 +431,6 @@ function printInvoice() {
             font-weight: 700;
             color: #999;
             font-style: italic;
-        }
-        
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-        
-        .section-title-bar {
-            width: 5px;
-            height: 22px;
-            background: linear-gradient(135deg, #FDBB30, #FFD700);
-            border-radius: 5px;
-        }
-        
-        .section-title-text {
-            font-size: 15px;
-            font-weight: 700;
-            color: #0B2A4A;
-            text-transform: uppercase;
         }
         
         .table-wrapper {
@@ -632,15 +592,9 @@ function printInvoice() {
     // White space - 180px
     html += "<div class='white-blank-space'></div>";
     
-    // Date
-    html += "<div class='date-panel'>";
-    html += "<div class='date-card'>";
-    html += "<div class='date-icon'>📅</div>";
-    html += "<div class='date-info'>";
-    html += "<div class='date-label'>Date</div>";
-    html += "<div class='date-value'>" + dateStr + "</div>";
-    html += "</div>";
-    html += "</div>";
+    // Compact date
+    html += "<div class='compact-date'>";
+    html += "<span>📅 " + dateStr + "</span>";
     html += "</div>";
     
     // Customer Grid
@@ -668,7 +622,7 @@ function printInvoice() {
     html += "</div>";
     html += "</div>";
     
-    // Booking
+    // Booking - COMPACT VERSION
     if (bookingno !== "-") {
         html += "<div class='booking-item'>";
         html += "<div class='booking-icon'>🔖</div>";
@@ -687,12 +641,6 @@ function printInvoice() {
         html += "</div>";
     }
     
-    html += "</div>";
-    
-    // Section Title
-    html += "<div class='section-title'>";
-    html += "<div class='section-title-bar'></div>";
-    html += "<div class='section-title-text'>Order Summary</div>";
     html += "</div>";
     
     // Table
